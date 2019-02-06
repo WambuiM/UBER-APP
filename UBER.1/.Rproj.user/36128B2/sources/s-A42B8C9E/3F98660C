@@ -1,0 +1,24 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1543211728012.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3F98660C",
+    "lastKnownWriteTime" : 1543491318,
+    "last_content_update" : 1543491318439,
+    "path" : "E:/R PROJECTS/UBER.1/server.R",
+    "project_path" : "server.R",
+    "properties" : {
+        "cursorPosition" : "7,32",
+        "docOutlineVisible" : "0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

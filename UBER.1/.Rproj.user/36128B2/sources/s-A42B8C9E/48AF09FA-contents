@@ -1,0 +1,106 @@
+library(RODBC)
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(plotly)
+library(dygraphs)
+library(zoo)
+library(DT)
+require(dplyr)
+library(janitor)
+library(forecast)
+library(tidyquant)
+library(timetk)
+library(sweep)
+library(ggplot2)
+
+Myconnection <- odbcDriverConnect('driver={SQL Server};server=.;database=UberDB;trusted_connection=true')
+showList <- sqlQuery(Myconnection, "select DISTINCT LastName AS EmployeeName from UberDataTest", stringsAsFactors = T)
+tripType <- sqlQuery(Myconnection, "select distinct ExpenseCode from UberDataTest", stringsAsFactors = T)
+
+Department <- sqlQuery(Myconnection, "select distinct Department from UberDataTest", stringsAsFactors = T)
+#odbcClose(Myconnection)
+showList
+tripType
+Department
+
+DATA <- sqlQuery(Myconnection, "select RequestDate, LastName,  Distancemi, Department, ExpenseCode, TotalChargeinKES from UberDataTest", stringsAsFactors = T)
+#View(DATA)
+
+options(max.print = 1000)
+
+
+CompanyData <- DATA %>%
+  mutate(Month = format(as.Date(RequestDate), "%m"), Year = format(as.Date(RequestDate), "%Y")) %>%
+  group_by(Month, Year, LastName, Department)%>%
+  summarise(TotalCharge = sum(TotalChargeinKES), Distance = sum(Distancemi))
+CompanyData
+
+FilteredEngineering<- CompanyData %>% 
+  filter(Department == "Engineering")%>%
+  group_by(Year, Month, Department) %>%
+  summarise(TotalCharge = sum(TotalCharge)) %>%
+  unite(Month_Year, c("Month", "Year"))
+
+FilteredEngineering
+
+FilteredMutinda<- CompanyData %>% 
+  filter(LastName == "Mutinda")%>%
+  group_by(Year, Month) %>%
+  summarise(TotalCharge = sum(TotalCharge)) %>%
+  unite(Month_Year, c("Year", "Month"))
+
+FilteredMutinda
+
+CompanyChargeData<- CompanyData %>% 
+  group_by(Year, Month) %>%
+  summarise(TotalCharge = sum(TotalCharge)) %>%
+  unite(Month_Year, c("Year", "Month"))
+
+p = ggplot() + 
+    geom_line(data = FilteredEngineering, aes(x = Month_Year, y = TotalCharge), color = "blue") +
+    #geom_line(data = FilteredMutinda, aes(x = Month_Year, y = TotalCharge), color = "red") +
+    xlab('Dates') +
+    ylab('TotalCharge')
+
+plot(FilteredEngineering$TotalCharge, main = "Main title",
+     xlab = "X axis title", ylab = "Y axis title",
+     pch = 19, frame = FALSE)
+
+plot(FilteredMutinda$TotalCharge, main = "Main title",
+     xlab = "X axis title", ylab = "Y axis title",
+     pch = 19, frame = FALSE)
+
+plot(CompanyChargeData$TotalCharge, main = "Main title",
+     xlab = "X axis title", ylab = "Y axis title",
+     pch = 19, frame = FALSE, marker = list(color = '#8B2323'))
+
+plot(FilteredEngineering$TotalCharge,FilteredEngineering$Month_Year, main = "Main title",
+     xlab = "X axis title", ylab = "Y axis title",
+     pch = 19, frame = FALSE)
+
+
+library(ggplot2)
+ggplot(CompanyChargeData, aes(Month_Year, TotalCharge)) + 
+  #geom_point() + 
+  geom_line(size = 1, alpha = 0.8) +
+  xlab("Year published") + 
+  ylab("Proportion of OA full-texts in Europe PMC")
+
+
+ggplot(aes(x = CompanyChargeData$Month_Year, y = CompanyChargeData$TotalCharge, group=1), data = CompanyChargeData) +
+  geom_point() +
+  geom_line() + 
+  ggtitle("Temperature by month")
+
+p = ggplot() +
+  
+
+
+p = ggplot() +
+  #geom_line(data = FilteredEngineering, aes(x = FilteredEngineering$Month_Year, y = TotalCharge), group=1, color = "blue") +
+  geom_line(data = FilteredMutinda, aes(x = FilteredMutinda$Month_Year, y = TotalCharge), group=1, color = "red") +
+  geom_line(data = CompanyChargeData, aes(x = CompanyChargeData$Month_Year, y = TotalCharge), group=1, color = "blue") +
+  xlab('Dates') +
+  ylab('percent.change')
+p

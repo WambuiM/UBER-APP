@@ -1,0 +1,25 @@
+# library(RODBC)
+# library(shiny)
+# library(shinydashboard)
+# library(ggplot2)
+# library(plotly)
+# library(dygraphs)
+# library(zoo)
+# library(DT)
+# require(dplyr)
+# library(janitor)
+# library(forecast)
+# library(tidyquant)
+# library(timetk)
+# library(sweep)
+# library(ggplot2)
+# 
+# Myconnection <- odbcDriverConnect('driver={SQL Server};server=.;database=UberDB;trusted_connection=true')
+# showList <- sqlQuery(Myconnection, "select DISTINCT LastName AS EmployeeName from UberDataTest", stringsAsFactors = T)
+# tripType <- sqlQuery(Myconnection, "select distinct ExpenseCode from UberDataTest", stringsAsFactors = T)
+# 
+# Department <- sqlQuery(Myconnection, "select distinct Department from UberDataTest", stringsAsFactors = T)
+# #odbcClose(Myconnection)
+# showList
+# tripType
+# Department

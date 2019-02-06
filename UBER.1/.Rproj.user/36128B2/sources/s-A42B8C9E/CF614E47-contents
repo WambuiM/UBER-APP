@@ -1,0 +1,56 @@
+library(RODBC)
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(plotly)
+library(dygraphs)
+library(zoo)
+library(DT)
+require(dplyr)
+library(janitor)
+library(forecast)
+library(tidyquant)
+library(timetk)
+library(sweep)
+library(ggplot2)
+
+Myconnection <- odbcDriverConnect('driver={SQL Server};server=.;database=UberDB;trusted_connection=true')
+showList <- sqlQuery(Myconnection, "select DISTINCT LastName AS EmployeeName from UberDataTest", stringsAsFactors = T)
+tripType <- sqlQuery(Myconnection, "select distinct ExpenseCode from UberDataTest", stringsAsFactors = T)
+
+Department <- sqlQuery(Myconnection, "select distinct Department from UberDataTest", stringsAsFactors = T)
+
+DATA <- sqlQuery(Myconnection, "select RequestDate, LastName, Department, ExpenseCode, Distancemi, TotalChargeinKES from UberDataTest", stringsAsFactors = T)
+View(DATA)
+
+DeptDATA <- data.frame(DATA$Department, DATA$Distancemi, DATA$TotalChargeinKES)
+View(DeptDATA)
+
+p <- ggplot(data = DATA, aes(x = RequestDate, y = TotalChargeinKES)) +
+      geom_line(color = "#00AFBB", size = 1)
+
+GroupedMonthly <- DATA %>%
+                  mutate(Month = format(as.Date(RequestDate), "%m"), Year = format(as.Date(RequestDate), "%Y")) #%>%
+View(GroupedMonthly)
+
+filteredByDate <- GroupedMonthly %>%
+                  group_by(Year, Month, LastName, Department)%>%
+                  summarise(TotalCharge = sum(TotalChargeinKES), Distance = sum(Distancemi))
+                    
+FilteredQA<- GroupedMonthly %>% 
+           filter(Department == "Quality Assurance")
+                  
+QA <- ggplot(data = FilteredQA, aes(x = RequestDate, y = TotalChargeinKES)) +
+  geom_line(color = '#BB4500', size = 1)
+
+FilteredName<- GroupedMonthly %>% 
+  filter(LastName == "Mutinda")
+
+Mutinda <- ggplot(data = FilteredName, aes(x = RequestDate, y = TotalChargeinKES)) +
+  geom_line(color = '#BB4500', size = 1)       
+
+ggplot() +
+  geom_line(data = DATA, aes(y = TotalChargeinKES, x = RequestDate), color = "red") +
+  geom_line(data = FilteredQA, aes(y = TotalChargeinKES, x = RequestDate), color = "blue") +
+  geom_line(data = FilteredName, aes(y = TotalChargeinKES, x = RequestDate), color = "green") 
+  # xlab('YEAR MONTH') +

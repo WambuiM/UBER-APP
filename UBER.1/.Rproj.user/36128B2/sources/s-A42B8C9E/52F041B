@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1549372484759.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "52F041B",
+    "lastKnownWriteTime" : 1541150496,
+    "last_content_update" : 1541150496,
+    "path" : "E:/R PROJECTS/UBER.1/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "cursorPosition" : "25,8",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
